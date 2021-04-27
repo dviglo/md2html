@@ -1,0 +1,52 @@
+# Данный workflow компилирует исходники на разных ОС для проверки
+
+# Отображаемое имя workflow
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#name
+name: Компиляция
+
+on:
+  # Запускается, если в ветке master были изменения
+  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#push
+  # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+  push:
+    branches:
+    - master
+
+  # Также можно запустить вручную
+  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#manual-events
+  workflow_dispatch:
+
+jobs:
+  # Идентификатор job
+  # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_id
+  Kompilyaciya:
+
+    # Консольные команды для скачивания и компиляции исходников совпадают в винде и в линуске,
+    # поэтому используем матрицу, чтобы не дублировать run
+    # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy
+    strategy:
+      matrix:
+        OS: [ubuntu-latest, windows-latest] # Какие значения будет принимать переменная OS
+
+    # Будет запущен на виртуальных машинах с разными ОС
+    # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: ${{ matrix.OS }}
+
+    # Отображаемое имя job 
+    # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idname
+    name: Компиляция
+
+    # Последовательность задач
+    # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idsteps
+    steps:
+
+    - name: Компилируем # Отображаемое имя step
+      run: |
+        # Качаем репозиторий в папку Repo
+        git clone https://github.com/Dviglo/md2html Repo
+
+        # Создаём проекты в папке Build
+        cmake Repo -B Build
+
+        # Компилируем
+        cmake --build Build
