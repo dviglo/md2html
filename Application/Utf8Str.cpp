@@ -885,17 +885,17 @@ string cp1251_to_utf8(const char* str) {
     wchar_t* ures = new wchar_t[result_u];
     if (!MultiByteToWideChar(1251, 0, str, -1, ures, result_u)) {
         delete[] ures;
-        return string();;
+        return string();
     }
     result_c = WideCharToMultiByte(65001, 0, ures, -1, 0, 0, 0, 0);
     if (!result_c) {
         delete[] ures;
-        return string();;
+        return string();
     }
     char* cres = new char[result_c];
     if (!WideCharToMultiByte(65001, 0, ures, -1, cres, result_c, 0, 0)) {
         delete[] cres;
-        return string();;
+        return string();
     }
     delete[] ures;
     res.append(cres);
